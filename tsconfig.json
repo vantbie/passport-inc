@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",                                  /* Versión de JS a la que se traduce */
+    "module": "NodeNext",                                /* Sistema de módulos para Node moderno */
+    "moduleResolution": "NodeNext",                      /* Cómo busca los archivos en node_modules */
+    "rootDir": "./src",                                  /* Dónde está tu código fuente */
+    "outDir": "./dist",                                 /* Dónde se guardará el código traducido */
+    "esModuleInterop": true,                             /* Permite importar paquetes viejos como si fueran modernos */
+    "forceConsistentCasingInFileNames": true,            /* Evita errores entre Windows (no distingue mayúsculas) y Linux */
+    "strict": true,                                      /* Activa todas las comprobaciones de seguridad de tipos */
+    "skipLibCheck": true                                 /* No revisa errores dentro de las librerías externas (ahorra tiempo) */
+  },
+  "include": ["src/**/*"],                               /* Solo procesa lo que esté en /src */
+  "exclude": ["node_modules"]                            /* Ignora la carpeta de librerías */
+}
