@@ -1,5 +1,7 @@
 import express, {Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import prisma from './lib/prisma.js';
+
 
 dotenv.config(); // carga las variables de entorno
 
@@ -10,8 +12,19 @@ const app: Application = express();
 app.use(express.json());
 
 // ruta de prueba 
-app.get('/health', (req: Request, res: Response) => {
-    res.status(200).json({ status: 'UP', message: 'PassPort Inc. API is running'});
+app.get('/health', async (req: Request, res: Response) => {
+    try {
+        const totalUsers = await prisma.user.count();
+
+        res.json({
+            status: "OK",
+            database: "SQLite conectada",
+            usuariosRegistrados: totalUsers
+        });
+
+    }catch (error) {
+        res.status(500).json({ status: "ERROR", message: "No se pudo conectar a la DB" });
+    }
 });
 
 //levantar el servidor
