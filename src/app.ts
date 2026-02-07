@@ -1,7 +1,7 @@
 import express, {Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import prisma from './lib/prisma.js';
-
+import authRoutes from './routes/auth.routes.js';
 
 dotenv.config(); // carga las variables de entorno
 
@@ -10,6 +10,9 @@ const app: Application = express();
 
 // Middleware
 app.use(express.json());
+
+// Direccion
+app.use('/auth', authRoutes);
 
 // ruta de prueba 
 app.get('/health', async (req: Request, res: Response) => {
