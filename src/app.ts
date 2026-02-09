@@ -2,6 +2,7 @@ import express, {Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import prisma from './lib/prisma.js';
 import authRoutes from './routes/auth.routes.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config(); // carga las variables de entorno
 
@@ -10,6 +11,9 @@ const app: Application = express();
 
 // Middleware
 app.use(express.json());
+
+// Cookie
+app.use(cookieParser());
 
 // Direccion
 app.use('/auth', authRoutes);

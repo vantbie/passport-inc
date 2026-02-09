@@ -2,8 +2,19 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
+import { generateToken, setTokenCookie } from '../services/auth.services.js';
+import { authenticateToken } from '../middleware/auth.middleware.js';
 
 const router = Router();
+router.get('/perfil', authenticateToken, (req, res) => {
+    // si entra aqui es por que el middleware lo dejo pasar
+    res.json({
+        message: "Este es tu perfil privado",
+        user: (req as any).user
+    });
+});
+
+// Ruta para visualizar perfil
 
 // RUTA PARA REGISTRAR USUARIOS
 router.post('/register', async (req: Request, res: Response) => {
@@ -75,15 +86,12 @@ router.post('/login', async (req: Request, res: Response) => {
         if (!isMatch) {
             return res.status(401).json({ message: "Contraseña incorrecta" });
         }
+        else{
+            const token = generateToken({id: user.id, email: user.email});
+            setTokenCookie(res, token);
 
-        // 4. Éxito
-        res.json({
-            message: `Bienvenido de nuevo, ${user.firstName}`,
-            user: {
-                id: user.id,
-                email: user.email
-            }
-        });
+            return res.json({ message: "Login exitoso" });
+        }
 
     } catch (error) {
         res.status(500).json({ message: "Error al iniciar sesión" });
