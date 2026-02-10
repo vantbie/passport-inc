@@ -2,19 +2,51 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
-import { generateToken, setTokenCookie } from '../services/auth.services.js';
+import { clearTokenCookie, generateToken, setTokenCookie } from '../services/auth.services.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
 
 const router = Router();
-router.get('/perfil', authenticateToken, (req, res) => {
-    // si entra aqui es por que el middleware lo dejo pasar
-    res.json({
-        message: "Este es tu perfil privado",
-        user: (req as any).user
-    });
-});
 
 // Ruta para visualizar perfil
+router.get('/perfil', authenticateToken, async (req, res) => {
+    // si entra aqui es por que el middleware lo dejo pasar
+    
+    if (!req.user) {
+        return res.status(401).json({ message: "No autorizado" });
+    }
+
+    try {
+        // Buscamos al usuario
+        const userProfile = await prisma.user.findUnique({
+            where: { 
+                id: req.user.id // Aquí usamos el ID del token como llave
+            },
+        });
+
+        if (!userProfile) {
+            return res.status(404).json({ message: "Usuario no encontrado en la DB" });
+        }
+
+        // Respondemos con los datos frescos de la base de datos
+        res.json({
+            message: `Hola ${userProfile.firstName }${userProfile.lastName}, este es tu perfil VIP`,
+            data: userProfile
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener perfil" });
+    }
+});
+
+// Ruta para cerrar sesion
+router.post('/logout', (req, res) => {
+    // Limpiamos
+    clearTokenCookie(res);
+
+    // Mensaje de verificacion
+    res.status(200).json({ message: "Has cerrado sesión correctamente" });
+});
+
 
 // RUTA PARA REGISTRAR USUARIOS
 router.post('/register', async (req: Request, res: Response) => {
@@ -63,7 +95,7 @@ router.post('/register', async (req: Request, res: Response) => {
 // RUTA PARA VALIDAR USUARIOS
 router.post('/login', async (req: Request, res: Response) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, rememberMe} = req.body;
 
         // 1. ¿Vienen los datos?
         if (!email || !password) {
@@ -88,7 +120,7 @@ router.post('/login', async (req: Request, res: Response) => {
         }
         else{
             const token = generateToken({id: user.id, email: user.email});
-            setTokenCookie(res, token);
+            setTokenCookie(res, token, rememberMe);
 
             return res.json({ message: "Login exitoso" });
         }

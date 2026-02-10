@@ -16,10 +16,10 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
         // Verificar si el token es válido y no ha expirado
         const decoded = jwt.verify(token, JWT_SECRET);
         
-        // 4. Guardar los datos del usuario dentro de 'req' para que la siguiente función los use
-        (req as any).user = decoded;
+        // Guardar los datos del usuario dentro de 'req' para que la siguiente función los use
+        req.user = decoded as { id: number; email: string};
 
-        // 5. ¡Todo bien! Pasa a la siguiente función
+        // Pasa a la siguiente función
         next();
     } catch (error) {
         return res.status(403).json({ message: "Token inválido o expirado" });
