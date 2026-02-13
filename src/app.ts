@@ -2,14 +2,19 @@ import express, {Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import prisma from './lib/prisma.js';
 import authRoutes from './routes/auth.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import cookieParser from 'cookie-parser';
 import { AppError } from './utils/AppError.js';
 import { globalErrorHandler } from './middleware/error.middleware.js';
+import cors from 'cors';
 
 dotenv.config(); // carga las variables de entorno
 
 // instanciamos la aplicacion
 const app: Application = express();
+
+// Configuracion de cors
+app.use(cors());
 
 // Middleware
 app.use(express.json());
@@ -19,22 +24,7 @@ app.use(cookieParser());
 
 // Direccion
 app.use('/auth', authRoutes);
-
-// ruta de prueba 
-app.get('/health', async (req: Request, res: Response) => {
-    try {
-        const totalUsers = await prisma.user.count();
-
-        res.json({
-            status: "OK",
-            database: "SQLite conectada",
-            usuariosRegistrados: totalUsers
-        });
-
-    }catch (error) {
-        res.status(500).json({ status: "ERROR", message: "No se pudo conectar a la DB" });
-    }
-});
+app.use('/admin', adminRoutes);
 
 // Manejo de rutas no encontradas
 app.all(/(.*)/, (req, res, next) => {

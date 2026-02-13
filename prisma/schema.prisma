@@ -15,11 +15,18 @@ datasource db {
   url      = "file:.//dev.db"  // <-- Esto le dice: "Crea un archivo llamado dev.db aquí mismo"
 }
 
-model User {
+enum Role {
+  USER
+  ADMIN
+}
+
+model Usuarios {
   id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
+  firstName String?
+  lastName  String?
   email     String   @unique
   password  String
+  role Role          @default(USER) // por defecto cualquiera que se registre es usuario
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
