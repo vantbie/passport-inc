@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Admin</title>
+    <link rel="stylesheet" href="styless.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-bg"></div>
+
+        <div class="hero register active">
+            <h2>¿Ya tienes cuenta?</h2>
+            <p>Inicia sesión para gestionar el panel de administración.</p>
+            <button type="button" onclick="toggleView()">INICIAR SESIÓN</button>
+        </div>
+
+        <div class="form register active">
+            <h2>Crear Cuenta</h2>
+            <div class="social-icons">
+                <i class="fab fa-google"></i>
+                <i class="fab fa-github"></i>
+            </div>
+            <p class="account-text">O usa tu email</p>
+            
+            <input type="text" id="reg-firstname" placeholder="Nombre" autocomplete="given-name" required>
+            <input type="text" id="reg-lastname" placeholder="Apellido" autocomplete="family-name" required>
+            <input type="email" id="reg-email" placeholder="Correo electrónico" autocomplete="email" required>
+            <input type="password" id="reg-pass" placeholder="Contraseña" autocomplete="new-password" required>
+                        
+            <button class="btn-action" onclick="registerUser()">REGISTRARSE</button>
+            <div id="register-message" class="message-box"></div>
+        </div>
+
+        <div class="hero login">
+            <h2>¿Eres nuevo?</h2>
+            <p>Regístrate para comenzar a usar nuestros servicios.</p>
+            <button type="button" onclick="toggleView()">REGISTRARSE</button>
+        </div>
+
+        <div class="form login">
+            <h2>Bienvenido</h2>
+            <div class="social-icons">
+                <i class="fab fa-google"></i>
+                <i class="fab fa-github"></i>
+            </div>
+            <p class="account-text">Ingresa tus credenciales</p>
+            
+            <input type="email" id="login-email" placeholder="Correo">
+            <input type="password" id="login-pass" placeholder="Contraseña">
+            
+            <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
+            
+            <button class="btn-action" onclick="loginUser()">ENTRAR</button>
+            <div id="login-message" class="message-box"></div>
+            
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

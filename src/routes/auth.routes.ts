@@ -17,19 +17,14 @@ router.post('/login', login);
 
 
 // Zona privada
-router.use(authenticateToken);
 
 // Ruta para visualizar perfil
-router.get('/perfil', profile);
+router.get('/perfil', authenticateToken, profile);
 
 // Ruta para actualizar 
-router.patch('/perfil', updateProfile);
+router.patch('/perfil', authenticateToken, updateProfile);
 
 // Ruta para eliminar perfil
-router.delete('/perfil', deleteAccount);
-
-router.delete('/delete-admin-test', restrictTo('ADMIN'), (req, res) => {
-    res.status(200).json({ status: 'success', message: '¡Si ves esto, eres ADMIN!' });
-});
+router.delete('/perfil', authenticateToken, deleteAccount);
 
 export default router;

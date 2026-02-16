@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+body { background: #0d0b14; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+.card {
+    position: relative; overflow: hidden; width: 750px; height: 480px;
+    border-radius: 16px; background: #13111b; border: 8px solid #13111b;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.card-bg {
+    position: absolute; z-index: 2; top: 0; left: 0; bottom: 0; width: 50%;
+    background: #3c23c9; border-radius: 12px; transition: 0.65s ease-in-out;
+    transform: translateX(0);
+}
+.card-bg.login { transform: translateX(100%); }
+
+.hero, .form {
+    position: absolute; width: 50%; height: 100%; display: flex;
+    flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; transition: 0.65s ease-in-out; padding: 0 40px;
+}
+
+.hero { z-index: 3; color: #f9f9f9; top: 0; }
+.hero button {
+    padding: 10px 30px; border-radius: 30px; border: 1px solid #f9f9f9;
+    background: transparent; color: #f9f9f9; cursor: pointer; margin-top: 20px;
+}
+.hero button:hover { background: #f9f9f9; color: #3c23c9; }
+
+.hero.register { left: 0; transform: translateX(-20%); opacity: 0; pointer-events: none; }
+.hero.register.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+.hero.login { right: 0; transform: translateX(20%); opacity: 0; pointer-events: none; }
+.hero.login.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+
+/* --- NUEVO: Color blanco para los títulos de los formularios --- */
+.form h2 {
+    color: #f9f9f9; /* El mismo blanco roto que usas en el panel lateral */
+}
+
+/* --- NUEVO: Estilos para los mensajes de error/éxito --- */
+.message-box {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+    min-height: 1.2em; /* Reserva espacio para que no "salte" el diseño */
+    transition: color 0.3s ease;
+    font-weight: 500;
+}
+
+/* Color para mensajes de éxito (verde) */
+.message-box.success {
+    color: #4caf50; 
+}
+
+/* Color para mensajes de error (rojo) */
+.message-box.error {
+    color: #f44336;
+}
+.form { z-index: 1; }
+.form input {
+    width: 100%; padding: 10px 15px; margin: 8px 0; background: #2b2839;
+    border: none; border-radius: 8px; color: #fff; outline: none;
+}
+.btn-action {
+    margin-top: 20px; padding: 10px 45px; border-radius: 30px; border: none;
+    background: #3c23c9; color: #fff; cursor: pointer; width: 100%;
+}
+.btn-action:hover { background: #2e1aa3; }
+
+.form.register { right: 0; opacity: 0; pointer-events: none; transform: translateX(100%); }
+.form.register.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+.form.login { left: 0; opacity: 0; pointer-events: none; transform: translateX(-100%); }
+.form.login.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+
+.social-icons i { margin: 0 10px 15px; color: #ccc; cursor: pointer; font-size: 1.2rem; }
+.account-text, .forgot { font-size: 0.8rem; color: #aaa; margin: 10px 0; text-decoration: none; }

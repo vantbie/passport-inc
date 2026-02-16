@@ -7,11 +7,18 @@ import cookieParser from 'cookie-parser';
 import { AppError } from './utils/AppError.js';
 import { globalErrorHandler } from './middleware/error.middleware.js';
 import cors from 'cors';
+import path from 'node:path';
+import { fileURLToPath } from 'url'; // Importa 'fileURLToPath' desde 'url'
+const __filename = fileURLToPath(import.meta.url); // // Crea las variables manualmente
+const __dirname = path.dirname(__filename);
 
 dotenv.config(); // carga las variables de entorno
 
 // instanciamos la aplicacion
 const app: Application = express();
+
+// Busca los archivos de public
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Configuracion de cors
 app.use(cors());
