@@ -97,7 +97,7 @@ export const profile = catchAsync(async (req: Request, res: Response, next: Next
     
     // El middleware 'authenticateToken' ya verificó el token y puso los datos en req.user.
     const user = await prisma.usuarios.findUnique({
-        where: { id: (req as any).user.id }
+        where: { id: req.user!.id }
     });
 
     if (!user) {
@@ -108,9 +108,10 @@ export const profile = catchAsync(async (req: Request, res: Response, next: Next
         status: 'success',
         data: {
             id: user.id,
-            email: user.email,
             firstName: user.firstName,
-            lastName: user.lastName
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role
         }
     });
 });
@@ -125,7 +126,7 @@ export const logout = (req: Request, res: Response) => {
 // Actualizar perfil
 export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email } = req.body;
-    const userId = (req as any).user.id; // Obtenido del token
+    const userId = req.user!.id; // Obtenido del token
 
     // SEGURIDAD: No permitir cambiar contraseña por aquí
     // Si intentan enviar password, lanzamos error. Eso requiere otro proceso más seguro.
@@ -164,21 +165,5 @@ export const updateProfile = catchAsync(async (req: Request, res: Response, next
             firstName: updatedUser.firstName,
             lastName: updatedUser.lastName
         }
-    });
-});
-
-// Eliminar cuenta
-export const deleteAccount = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user.id;
-
-    // Borrado Físico (Hard Delete): Elimina el registro de la DB.
-    await prisma.usuarios.delete({
-        where: { id: userId }
-    });
-
-    // En REST, cuando borras algo, devuelves 204 (No Content) y null
-    res.status(204).json({
-        status: 'success',
-        data: null
     });
 });

@@ -69,7 +69,7 @@ async function registerUser() {
         const response = await fetch('/auth/register', { // Asegúrate de que la ruta sea correcta (/api/auth o /auth)
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName, lastName, email, password })
+            body: JSON.stringify({ firstName, lastName, email, password }) // serializacion
         });
 
         const data = await response.json();
@@ -120,14 +120,23 @@ async function loginUser() {
         const data = await response.json();
 
         if (response.ok) {
+            const user = data.user;
             const userName = data.user ? data.user.firstName : "Usuario";
+            
             showMessage('login', `¡Hola de nuevo ${userName}!`, 'success');
             
-            // AQUÍ REDIRIGIREMOS EN EL FUTURO
             setTimeout(() => {
-                // window.location.href = "/perfil.html"; // Descomentar cuando exista la página
                 console.log("Redirigiendo al perfil...");
-            }, 2000);
+                
+                const role = user.role;
+
+                if ( role === 'ADMIN') {
+                    window.location.href = '/admin.html'
+                
+                } else { 
+                    window.location.href = '/perfil.html'
+                }
+            }, 1000);
 
         } else {
             showMessage('login', ` Error: ${data.message}`, 'error');

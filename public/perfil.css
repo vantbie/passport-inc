@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* --- 1. CONFIGURACIÓN BASE --- */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+body { 
+    background: #0d0b14; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+}
+
+/* --- 2. TARJETA PRINCIPAL --- */
+.card-profile {
+    position: relative; 
+    width: 500px; 
+    min-height: 550px; 
+    padding: 40px;
+    
+    border-radius: 16px; 
+    background: #13111b; 
+    border: 8px solid #13111b; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 3. TEXTOS Y TÍTULOS --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+h2 {
+    color: #f9f9f9;
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #aaa; 
+    font-size: 0.9rem;
+}
+
+/* --- 4. INPUTS --- */
+.form-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    color: #ccc;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.styled-input {
+    width: 100%; 
+    padding: 12px 15px; 
+    margin-bottom: 15px; 
+    background: #2b2839; 
+    border: none; 
+    border-radius: 8px; 
+    color: #fff; 
+    outline: none;
+    font-size: 1rem;
+}
+
+.styled-input:read-only {
+    cursor: default;
+    color: #bbb; 
+}
+
+/* --- 5. BOTÓN CERRAR SESIÓN (CENTRADO Y ABAJO) --- */
+.btn-logout-center {
+    width: 100%;             /* Ocupa todo el ancho */
+    margin-top: 25px;        /* Espacio para separarse de los inputs */
+    padding: 12px 0;         /* Altura cómoda */
+    
+    background: transparent; /* Fondo transparente */
+    border: 2px solid #3c23c9; /* Borde morado visible */
+    color: #f9f9f9;          /* Texto blanco */
+    
+    border-radius: 30px;     /* Bordes redondeados */
+    font-size: 0.95rem;      /* Letra legible */
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-logout-center:hover {
+    background: #3c23c9;     /* Se rellena de morado al pasar el mouse */
+    color: #fff;
+    box-shadow: 0 0 15px rgba(60, 35, 201, 0.4); /* Brillo suave */
+}

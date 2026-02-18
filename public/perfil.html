@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="perfil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="card-profile">
+        
+        <div class="profile-content">
+            
+            <div class="header-section">
+                <h2 id="header-welcome">Cargando...</h2>
+                <p class="subtitle">Bienvenido a tu panel de usuario</p>
+            </div>
+
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" id="user-firstName" class="styled-input" readonly>
+                
+                <label>Apellido</label>
+                <input type="text" id="user-lastName" class="styled-input" readonly>
+                
+                <label>Correo Electrónico</label>
+                <input type="email" id="user-email" class="styled-input" readonly>
+            </div>
+
+            <button id="btn-logout" class="btn-logout-center">
+                <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
+            </button>
+
+        </div>
+    </div>
+
+    <script src="perfil.js"></script>
+
+</body>
+</html>

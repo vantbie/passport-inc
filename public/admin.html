@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador</title>
+    
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="card-admin">
+        
+        <button id="btn-logout" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+
+        <div class="header-section">
+            <h2>Panel de Control</h2>
+            
+            <div class="user-info">
+                <p class="user-name">
+                    Hola, <span id="admin-name">Cargando...</span> <span id="admin-lastname"></span>
+                </p>
+                <p class="user-email">
+                    <i class="fas fa-envelope"></i> 
+                    <span id="admin-email">...</span>
+                </p>
+            </div>
+        </div>
+
+        <div id="admin-message" class="message-box"></div>
+
+        <div class="table-container">
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

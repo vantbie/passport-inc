@@ -1,6 +1,30 @@
 import { Request, Response } from 'express';
 import  prisma  from '../lib/prisma.js';
 
+
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        // Buscamos todos los usuarios (ajusta según tu base de datos)
+        // Ejemplo genérico:
+        const users = await prisma.usuarios.findMany({
+          where: {
+            role: 'USER'
+          }
+        }); 
+        
+        console.log(`¡Éxito! Se encontraron ${users.length} usuarios.`);
+
+        res.status(200).json({
+            status: 'success',
+            results: users.length,
+            data: users
+        });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Error al obtener usuarios' });
+    }
+};
+
+
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   

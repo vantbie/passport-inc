@@ -4,9 +4,9 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura';
 
 // Verifica el token
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-    // Obtener el token de la cookie
-    const token = req.cookies.access_token;
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => { 
+  // Obtener el token de la cookie
+    let token = req.cookies.access_token;
 
     // Si no hay token, no hay paso
     if (!token) {
@@ -31,7 +31,6 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 export const restrictTo = (...allowedRoles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     // Obtenemos el usuario (que authenticateToken ya puso en la request)
-    // Usamos 'as any' porque TypeScript es muy estricto y a veces se queja de que 'user' no existe en Request
     const user = req.user;
 
     // Verificamos si existe el usuario y si tiene rol
@@ -42,7 +41,7 @@ export const restrictTo = (...allowedRoles: string[]) => {
        });
     }
 
-    // 3. Verificamos si el rol del usuario está en la lista de permitidos
+    // Verificamos si el rol del usuario está en la lista de permitidos
     if (!allowedRoles.includes(user.role)) {
       return res.status(403).json({
         status: 'fail',
@@ -50,7 +49,7 @@ export const restrictTo = (...allowedRoles: string[]) => {
       });
     }
 
-    // 4. Si pasó los filtros, adelante
+    // Si pasó los filtros, adelante
     next();
   };
 };
