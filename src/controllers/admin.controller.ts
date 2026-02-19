@@ -4,8 +4,7 @@ import  prisma  from '../lib/prisma.js';
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
-        // Buscamos todos los usuarios (ajusta según tu base de datos)
-        // Ejemplo genérico:
+        // Buscamos todos los usuarios
         const users = await prisma.usuarios.findMany({
           where: {
             role: 'USER'
@@ -19,6 +18,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
             results: users.length,
             data: users
         });
+        
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error al obtener usuarios' });
     }

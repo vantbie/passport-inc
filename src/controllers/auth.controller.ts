@@ -4,11 +4,13 @@ import { AppError } from '../utils/AppError.js';
 import  prisma  from '../lib/prisma.js'; // Asegúrate de que la ruta a prisma sea correcta
 import bcrypt from 'bcrypt';
 import { generateToken, setTokenCookie } from '../services/auth.services.js';
+import rateLimit from 'express-rate-limit'; // 1. IMPORTAMOS ESTO
 
 // se envuelve todo con catchAsync
 
 // Login
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Datos recibicos: ", req.body);
     const { email, password, rememberMe } = req.body;
 
     // Validación básica
@@ -47,6 +49,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 
 // Registro
 export const register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Datos recibicos: ", req.body);
     const { email, password, firstName, lastName } = req.body;
 
     // Validar que lleguen los datos
@@ -122,48 +125,11 @@ export const logout = (req: Request, res: Response) => {
     res.status(200).json({ status: 'success', message: 'Sesión cerrada' });
 };
 
-
-// Actualizar perfil
-export const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { firstName, lastName, email } = req.body;
-    const userId = req.user!.id; // Obtenido del token
-
-    // SEGURIDAD: No permitir cambiar contraseña por aquí
-    // Si intentan enviar password, lanzamos error. Eso requiere otro proceso más seguro.
-    if (req.body.password || req.body.passwordConfirm) {
-        return next(new AppError('Esta ruta no es para cambiar contraseñas. Por favor usa /update-password', 400));
+export const loginLimiter = rateLimit({
+    windowMs: 30 * 1000, // Tiempo de castigo: 30 segundos
+    max: 3, // Límite exacto: 3 intentos
+    message: { 
+        status: 'error', 
+        message: 'Bloqueado' 
     }
-
-    // VALIDACIÓN: Si quiere cambiar el email, verificamos que no esté ocupado
-    if (email) {
-        const existingUser = await prisma.usuarios.findUnique({ 
-            where: { email } 
-        });
-        // Si existe alguien con ese email Y ese alguien NO soy yo (es otro usuario)
-        if (existingUser && existingUser.id !== userId) {
-            return next(new AppError('El email ya está en uso', 400));
-        }
-    }
-
-    // ACTUALIZAR: Prisma solo tocará los campos que le pasemos
-    const updatedUser = await prisma.usuarios.update({
-        where: { id: userId },
-        data: {
-            firstName,
-            lastName,
-            email
-        }
-    });
-
-    // RESPONDER
-    res.status(200).json({
-        status: 'success',
-        message: 'Perfil actualizado',
-        user: {
-            id: updatedUser.id,
-            email: updatedUser.email,
-            firstName: updatedUser.firstName,
-            lastName: updatedUser.lastName
-        }
-    });
 });
