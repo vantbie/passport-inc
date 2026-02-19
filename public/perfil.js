@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Verificamos si la respuesta es correcta
         if (!response.ok) {
             // Si el servidor dice "Error" (401/403), es que no hay sesión válida.
-            // Redirigimos al usuario al login inmediatamente.
             throw new Error('No autorizado');
         }
         

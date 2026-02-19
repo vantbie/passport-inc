@@ -27,10 +27,7 @@ const toggleView = () => {
     }
 };
 
-// --- FUNCIÓN AUXILIAR PARA MOSTRAR MENSAJES ---
-// context: 'register' o 'login' (para saber en qué cajita escribir)
-// type: 'success' (verde) o 'error' (rojo)
-// message: El texto que quieres mostrar
+// FUNCIÓN AUXILIAR PARA MOSTRAR MENSAJES 
 const showMessage = (context, message, type) => {
     const messageBox = document.getElementById(`${context}-message`);
     messageBox.textContent = message;
@@ -119,6 +116,12 @@ async function loginUser() {
 
         const data = await response.json();
 
+        // demasiado intentos
+        if (response.status === 429) {
+            iniciarCuentaRegresiva(30);
+            return; // Cortamos la ejecución aquí
+        }
+
         if (response.ok) {
             const user = data.user;
             const userName = data.user ? data.user.firstName : "Usuario";
@@ -145,4 +148,40 @@ async function loginUser() {
         console.error(error);
         showMessage('login', "Error al conectar con el servidor", 'error');
     }
+}
+
+function iniciarCuentaRegresiva(segundosRestantes) {
+    //  Capturamos el botón y el div de los mensajes
+    const btnLogin = document.getElementById('btn-login'); // Tu botón de submit
+    const mensajeDiv = document.getElementById('login-message'); // Donde muestras los errores
+
+    // Desactivamos el botón para que no puedan seguir clickeando
+    btnLogin.disabled = true;
+    btnLogin.style.opacity = '0.5'; // Lo hacemos ver apagado
+    btnLogin.style.cursor = 'not-allowed';
+
+    // Creamos el cronómetro que se ejecuta cada 1000ms (1 segundo)
+    const intervalo = setInterval(() => {
+        
+        // Actualizamos el texto en pantalla
+        mensajeDiv.style.color = '#ff4d4d'; // Usamos tu clase roja de error
+        mensajeDiv.textContent = `Por seguridad, no puedes iniciar sesión por ${segundosRestantes} segundos.`;
+        
+        segundosRestantes--; // Restamos 1 segundo
+
+        // Cuando llega a cero, restauramos todo
+        if (segundosRestantes < 0) {
+            clearInterval(intervalo); // Detenemos el reloj
+            
+            // Volvemos a encender el botón
+            btnLogin.disabled = false;
+            btnLogin.style.opacity = '1';
+            btnLogin.style.cursor = 'pointer';
+            
+            // Limpiamos el mensaje
+            mensajeDiv.textContent = '';
+            mensajeDiv.style.color = '';
+        }
+
+    }, 1000); // 1000 milisegundos = 1 segundo
 }
