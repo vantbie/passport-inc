@@ -8,12 +8,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnLogout = document.getElementById('btn-logout');
 
     try {
+        //Buscamos el token en el sessionStorage
+        const token = sessionStorage.getItem('jwt_token');
+
+        // Preparamos los encabezados
+        const headers = {'Content-Type': 'application/json'};
+
+        // Si existe un token suelto, lo inyectamos en el encabezado
+        if (token && token !== 'undefined' && token !== 'null') {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         // Pedimos los datos al Backend
         const response = await fetch('/auth/perfil', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
             credentials: 'include'
         });
 
@@ -21,6 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Verificamos si la respuesta es correcta
         if (!response.ok) {
             // Si el servidor dice "Error" (401/403), es que no hay sesión válida.
+            const errorDelServidor = await response.json();
+            console.error("EL SERVIDOR DIJO:", errorDelServidor);
             throw new Error('No autorizado');
         }
         
@@ -44,14 +55,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
             try {
+                // Función auxiliar para leer una cookie específica por su nombre
+                const getCookie = (name) => {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                    return null;
+                };
+
+                // Sacamos el token CSRF de la cookie
+                const csrfToken = getCookie('csrf_token');
+
                 const response = await fetch('/auth/logout', {
                     method: 'POST', // Usamos POST como definimos en el backend
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
                     }
                 });
 
                 if (response.ok) {
+                    sessionStorage.removeItem('jwt_token');
                     // Si el servidor borró la cookie, nos vamos al login
                     window.location.href = '/index.html';
                 } else {

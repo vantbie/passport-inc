@@ -1,7 +1,21 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // Verificar si es admin y cargar perfil propio
     try {
-        const response = await fetch('/auth/perfil', { credentials: 'include' });
+
+        // Buscamos el token
+        const jwtToken = sessionStorage.getItem('jwt_token');
+        const headersConfig = { 'Content-Type': 'application/json' };
+
+        if (jwtToken && jwtToken !== 'undefined' && jwtToken !== 'null') {
+            headersConfig['Authorization'] = `Bearer ${jwtToken}`;
+        }
+
+        const response = await fetch('/auth/perfil', { 
+            method: 'GET',
+            headers: headersConfig,
+            credentials: 'include' 
+        });
+
         if (!response.ok) throw new Error('No autorizado');
         const respuesta = await response.json();
         const user = respuesta.data || respuesta.user;
@@ -28,9 +42,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/index.html';
     }
 
-    // Logout
+    // Logout (Blindado con CSRF)
     document.getElementById('btn-logout').addEventListener('click', async () => {
-        await fetch('/auth/logout', { method: 'POST' });
+        // Función para leer la cookie
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        };
+
+        const csrfToken = getCookie('csrf_token');
+
+        await fetch('/auth/logout', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            }
+        });
+        
+        sessionStorage.removeItem('jwt_token'); // Limpiamos la memoria
         window.location.href = '/index.html';
     });
 });
@@ -43,7 +75,21 @@ async function cargarUsuarios() {
     tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
 
     try {
-        const response = await fetch('/admin', { credentials: 'include' });
+
+        // Sacamos el token nuevamente
+        const jwtToken = sessionStorage.getItem('jwt_token');
+        const headersConfig = { 'Content-Type': 'application/json' };
+        
+        if (jwtToken && jwtToken !== 'undefined' && jwtToken !== 'null') {
+            headersConfig['Authorization'] = `Bearer ${jwtToken}`;
+        }
+
+        const response = await fetch('/admin', {
+            method: 'GET',
+            headers: headersConfig,
+            credentials: 'include'
+        });
+
         const data = await response.json();
         
         tbody.innerHTML = ''; 
@@ -100,8 +146,32 @@ window.ejecutarEliminacion = async (id) => {
     mensajeDiv.innerHTML = 'Eliminando...'; // Feedback instantáneo
 
     try {
+        // sacamos las llaves
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        const csrfToken = getCookie('csrf_token');
+        const jwtToken = sessionStorage.getItem('jwt_token');
+
+        // preparamos headers
+        const headersConfig = {
+            //'X-CSRF-Token': csrfToken 
+            'X-CSRF-Token': 'hacker-intentando-adivinar-123'
+        };
+
+        // Si hay token volátil, lo metemos también
+        if (jwtToken && jwtToken !== 'undefined' && jwtToken !== 'null') {
+            headersConfig['Authorization'] = `Bearer ${jwtToken}`;
+        }
+
+        // hacemos la peticion
         const response = await fetch(`/admin/${id}`, { 
             method: 'DELETE',
+            headers: headersConfig,
             credentials: 'include'
         });
 

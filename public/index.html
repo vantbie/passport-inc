@@ -31,7 +31,7 @@
             <input type="email" id="reg-email" placeholder="Correo electrónico" autocomplete="email" required>
             <input type="password" id="reg-pass" placeholder="Contraseña" autocomplete="new-password" required>
                         
-            <button class="btn-action" onclick="registerUser()">REGISTRARSE</button>
+            <button type="button" class="btn-action" onclick="registerUser()">REGISTRARSE</button>
             <div id="register-message" class="message-box"></div>
         </div>
 
@@ -52,9 +52,16 @@
             <input type="email" id="login-email" placeholder="Correo">
             <input type="password" id="login-pass" placeholder="Contraseña">
             
+            <div style="text-align: left; margin-bottom: 15px; color: #ccc; font-size: 0.9em;">
+                <label>
+                    <input type="checkbox" id="login-remember"> 
+                    Recordarme
+                </label>
+            </div>
+
             <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
             
-            <button id="btn-login" class="btn-action" onclick="loginUser()">ENTRAR</button>
+            <button type="button" id="btn-login" class="btn-action" onclick="loginUser()">ENTRAR</button>
             <div id="login-message" class="message-box"></div>
             
         </div>

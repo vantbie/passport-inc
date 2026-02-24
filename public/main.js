@@ -100,6 +100,7 @@ async function registerUser() {
 async function loginUser() {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-pass').value;
+    const rememberMe = document.getElementById('login-remember').checked;
 
     if (!email || !password) {
          showMessage('login', " Ingresa tu correo y contraseña.", 'error');
@@ -111,7 +112,7 @@ async function loginUser() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password, rememberMe })
         });
 
         const data = await response.json();
@@ -125,7 +126,16 @@ async function loginUser() {
         if (response.ok) {
             const user = data.user;
             const userName = data.user ? data.user.firstName : "Usuario";
+            console.log("Datos recibidos del backend:", user);
             
+            if (!rememberMe && data.token) {
+                //Guardamos el token en el almacenamiento local
+                sessionStorage.setItem('jwt_token', data.token);
+            } else {
+                //Usó cookie, así que borramos cualquier token viejo por seguridad
+                sessionStorage.removeItem('jwt_token');
+            }
+
             showMessage('login', `¡Hola de nuevo ${userName}!`, 'success');
             
             setTimeout(() => {
@@ -139,7 +149,7 @@ async function loginUser() {
                 } else { 
                     window.location.href = '/perfil.html'
                 }
-            }, 1000);
+            }, 1000);// Responder
 
         } else {
             showMessage('login', ` Error: ${data.message}`, 'error');
