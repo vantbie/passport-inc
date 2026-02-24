@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { deleteUser, getAllUsers } from '../controllers/admin.controller.js'; 
 import { authenticateToken, restrictTo } from '../middleware/auth.middleware.js';
+import { verifyCsrfToken } from '../middleware/auth.middleware.js'
 
 const router = Router();
 
@@ -11,6 +12,6 @@ router.use(authenticateToken, restrictTo('ADMIN'));
 router.get('/', getAllUsers)
 
 // Ruta para eliminar usuario
-router.delete('/:id', deleteUser);
+router.delete('/:id', verifyCsrfToken, deleteUser);
 
 export default router;
