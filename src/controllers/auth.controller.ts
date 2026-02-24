@@ -3,8 +3,8 @@ import { catchAsync } from '../utils/catchAsync.js';
 import { AppError } from '../utils/AppError.js';
 import  prisma  from '../lib/prisma.js'; // Asegúrate de que la ruta a prisma sea correcta
 import bcrypt from 'bcrypt';
-import { generateToken, setTokenCookie } from '../services/auth.services.js';
-import rateLimit from 'express-rate-limit'; // 1. IMPORTAMOS ESTO
+import { generateToken } from '../services/auth.services.js';
+import crypto from 'crypto';
 
 // se envuelve todo con catchAsync
 
@@ -27,23 +27,60 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
         return next(new AppError('Credenciales incorrectas', 401));
     }
 
-    // Generar Token y Cookie
-    const token = generateToken({ id: user.id, email: user.email, role: user.role});
-    setTokenCookie(res, token, rememberMe);
+    // Generar Token o Cookie
+    const token = generateToken(user);
 
-    // Responder
-    res.status(200).json({
-        status: 'success',
-        token,
-        message: 'Login exitoso',
-        user: {
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role
-        }
-    });
+    const csrfToken = crypto.randomBytes(32).toString('hex');
+
+
+    if (rememberMe) {
+        // Sesión Persistente con Cookie
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // La cookie dura 30 días
+        });
+
+        // enviamos el token csrf al frontend
+        res.cookie('csrf_token', csrfToken, {
+            httpOnly: false, // para que el main pueda leerla
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        })
+
+        return res.status(200).json({ 
+            status: 'success',
+            token: token,
+            message: 'Login persistente exitoso',
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
+            } 
+        });
+
+    } else {
+        //Sesión Sin Estado
+        // Nos aseguramos de borrar cualquier cookie vieja que haya quedado
+        res.clearCookie('access_token');
+        
+        // Enviamos el token en formato JSON para que el frontend lo maneje
+        return res.status(200).json({
+            status: 'success',
+            token: token,
+            message: 'Login exitoso',
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
+            }
+        });
+    }
 });
 
 
@@ -55,6 +92,17 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
     // Validar que lleguen los datos
     if (!email || !password || !firstName || !lastName) {
         return next(new AppError('Todos los campos son obligatorios', 400));
+    }
+
+    // Validar formato del correo electrónico usando RegEx
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return next(new AppError('Formato de correo inválido. Por favor usa un correo real (ejemplo: usuario@gmail.com).', 400));
+    }
+
+    // 👇 NUEVO: 3. Validar longitud de la contraseña
+    if (password.length < 8) {
+        return next(new AppError('La contraseña es muy corta. Debe tener al menos 8 caracteres.', 400));
     }
 
     // Verificar si ya existe el email
@@ -77,8 +125,8 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
     });
 
     // Generar Token y Cookie (para que quede logueado al registrarse)
-    const token = generateToken({ id: newUser.id, email: newUser.email });
-    setTokenCookie(res, token, false); // false porque es registro, no "recordarme"
+    const token = generateToken({ id: newUser.id, email: newUser.email, role: newUser.role});
+    //setTokenCookie(res, token, false); // false porque es registro, no "recordarme"
 
     // Responder
     res.status(201).json({
@@ -125,11 +173,3 @@ export const logout = (req: Request, res: Response) => {
     res.status(200).json({ status: 'success', message: 'Sesión cerrada' });
 };
 
-export const loginLimiter = rateLimit({
-    windowMs: 30 * 1000, // Tiempo de castigo: 30 segundos
-    max: 3, // Límite exacto: 3 intentos
-    message: { 
-        status: 'error', 
-        message: 'Bloqueado' 
-    }
-});
