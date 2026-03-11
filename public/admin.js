@@ -159,8 +159,7 @@ window.ejecutarEliminacion = async (id) => {
 
         // preparamos headers
         const headersConfig = {
-            //'X-CSRF-Token': csrfToken 
-            'X-CSRF-Token': 'hacker-intentando-adivinar-123'
+            'X-CSRF-Token': csrfToken
         };
 
         // Si hay token volátil, lo metemos también

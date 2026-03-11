@@ -66,12 +66,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Sacamos el token CSRF de la cookie
                 const csrfToken = getCookie('csrf_token');
 
-                const response = await fetch('/auth/logout', {
-                    method: 'POST', // Usamos POST como definimos en el backend
-                    headers: {
+                // buscamos el jwt
+                const jwtToken = sessionStorage.getItem('jwt_token');
+
+
+                // Preparamos los encabezados de seguridad 
+                const headersConfig = {
                         'Content-Type': 'application/json',
                         'X-CSRF-Token': csrfToken
-                    }
+                };
+                   
+                // Si hay token en la memoria, lo metemos en el encabezado
+                if (jwtToken && jwtToken !== 'undefined' && jwtToken !== 'null') {
+                    headersConfig['Authorization'] = `Bearer ${jwtToken}`;
+                }
+
+                // Hacemos la peticion al servidor
+                const response = await fetch('/auth/logout', {
+                    method: 'POST', // Usamos POST como definimos en el backend
+                    headers: headersConfig,
+                    credentials: 'include'
                 });
 
                 if (response.ok) {
