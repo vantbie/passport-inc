@@ -97,10 +97,10 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
     // Validar formato del correo electrónico usando RegEx
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        return next(new AppError('Formato de correo inválido. Por favor usa un correo real (ejemplo: usuario@gmail.com).', 400));
+        return next(new AppError('Formato de correo inválido. Ejemplo de formato: usuario@gmail.com', 400));
     }
 
-    // 👇 NUEVO: 3. Validar longitud de la contraseña
+    // Validar longitud de la contraseña
     if (password.length < 8) {
         return next(new AppError('La contraseña es muy corta. Debe tener al menos 8 caracteres.', 400));
     }
